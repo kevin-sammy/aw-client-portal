@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AW Client Report Portal</title>
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; max-width: 1200px; margin: auto; padding: 30px; background-color: #f8fafc; color: #334155; }
+        h1 { color: #1e3a8a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 30px; }
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        h2 { color: #2563eb; margin-top: 0; font-size: 1.4rem; }
+        label { display: block; margin-top: 12px; font-weight: 600; font-size: 0.9rem; color: #475569; }
+        input { width: 100%; padding: 10px; margin: 4px 0 12px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
+        button { background: #2563eb; color: white; padding: 12px; border: none; border-radius: 6px; cursor: pointer; width: 100%; font-size: 1rem; font-weight: bold; margin-top: 10px; }
+        button:hover { background: #1d4ed8; }
+        .client-entry { border: 1px solid #e2e8f0; padding: 15px; margin-bottom: 15px; border-radius: 6px; background: #f8fafc; }
+        .client-header { font-weight: bold; font-size: 1.1rem; color: #1e3a8a; margin-bottom: 6px; }
+        .download-link { display: inline-block; background: #10b981; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: bold; margin-top: 8px; }
+        .download-link:hover { background: #059669; }
+        .empty-state { color: #94a3b8; text-align: center; margin-top: 40px; font-style: italic; }
+    </style>
+</head>
+<body>
+
+    <h1>AW Client Report Portal</h1>
+
+    <div class="grid-container">
+        <div class="card">
+            <h2>New Profile Calculations</h2>
+            <form action="/calculate" method="POST">
+                <label>Client Name</label>
+                <input type="text" name="client_name" placeholder="E.g. Jane Smith" required>
+
+                <label>Monthly Inflow ($)</label>
+                <input type="number" step="0.01" name="inflow" required>
+
+                <label>Monthly Outflow ($)</label>
+                <input type="number" step="0.01" name="outflow" required>
+
+                <label>Retirement Accounts Total ($)</label>
+                <input type="number" step="0.01" name="retirement" required>
+
+                <label>Non-Retirement Accounts Total ($)</label>
+                <input type="number" step="0.01" name="non_retirement" required>
+
+                <label>Trust Value ($)</label>
+                <input type="number" step="0.01" name="trust" required>
+
+                <label>Total Liabilities ($)</label>
+                <input type="number" step="0.01" name="liabilities" required>
+
+                <button type="submit">Process and Log Client</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Calculated Reports History</h2>
+            {% if clients %}
+                {% for client in clients %}
+                    <div class="client-entry">
+                        <div class="client-header">{{ client.name }}</div>
+                        <div><strong>Private Reserve:</strong> ${{ "{:,.2f}".format(client.private_reserve) }}</div>
+                        <div><strong>Net Worth:</strong> ${{ "{:,.2f}".format(client.net_worth) }}</div>
+                        <a href="/download_pdf/{{ client.id }}" class="download-link">💾 Export SACS / TCC PDF</a>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="empty-state">No profiles recorded yet. Use the system on the left to process records.</p>
+            {% endif %}
+        </div>
+    </div>
+
+</body>
+</html>
